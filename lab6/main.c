@@ -6,76 +6,39 @@
 #include<unistd.h>
 #include <cstdlib>
 using namespace std;
-int main(int argc, char ** argv)
+#define ETH_P_ALL 0x0003
+int main()
 {
-    // rawsocsniffer sniffer(htons(ETH_P_ALL));
-    rawsocsniffer sniffer(htons(0x0003));
-    char ch;
-    filter myfilter;
+    rawsocsniffer sniffer(htons(ETH_P_ALL)); 
+	filter myfilter;
     memset(&myfilter,0,sizeof(myfilter));
-	// string sipstr,dipstr;
-	// cin>>sipstr>>dipstr;
-	// const char*sip=sipstr.data();
-	// const char*dip=dipstr.data();
-	// myfilter.sip=inet_addr(sip);
-	// myfilter.dip=inet_addr(dip);
-	// bool a,t,u,i;
-	// cin>>a>>t>>u>>i;
-	// if(a)
-	// {
-	// 	sniffer.setbit((myfilter.protocol),1);
-	// }
-	// if(t)
-	// {
-	// 	sniffer.setbit((myfilter.protocol),2);
-	// }
-	// if(u)
-	// {
-	// 	sniffer.setbit((myfilter.protocol),3);
-	// }
-	// if(i)
-	// {
-	// 	sniffer.setbit((myfilter.protocol),4);
-	// }
-
-    while((ch=getopt(argc, argv,"s:d:atui"))!=-1)
-    {
-	switch (ch)
+	string sipstr,dipstr;
+	cin>>sipstr>>dipstr;
+	const char*sip=sipstr.data();
+	const char*dip=dipstr.data();
+	myfilter.sip=inet_addr(sip);
+	myfilter.dip=inet_addr(dip);
+	// myfilter.sip=inet_addr("0.0.0.0");
+	// myfilter.dip=inet_addr("192.168.226.130");
+	int a,t,u,i;
+	cin>>a>>t>>u>>i;
+	if(a)
 	{
-	    case 's':
-		myfilter.sip=inet_addr(optarg);
-		break;
-	    case 'd':
-		myfilter.dip=inet_addr(optarg);
-		break;
-	    case 'a':
 		sniffer.setbit((myfilter.protocol),1);
-		break;
-	    case 't':
-		sniffer.setbit((myfilter.protocol),2);
-		break;
-	    case 'u':
-		sniffer.setbit((myfilter.protocol),3);
-		break;
-	    case 'i':
-		sniffer.setbit((myfilter.protocol),4);
-		break;
-	    default:
-		break;
 	}
-    }
-    cout<<"create sniffer succeed."<<endl;
-    
-    //set sniffer filter;
-    sniffer.setfilter(myfilter);
-    
-    //sniffer initialize
-    if(!sniffer.init())
-    {
-	cout<<"sniffer initialize error!"<<endl;
-	exit(-1);
-    }
+	if (t)
+	{
+		sniffer.setbit((myfilter.protocol),2);
+	}
+	if (u)
+	{
+		sniffer.setbit((myfilter.protocol),3);
+	}
+	if (i)
+	{
+		sniffer.setbit((myfilter.protocol),4);
+	}
 
-    //start to capture packets;
+    sniffer.setfilter(myfilter);
     sniffer.sniffer();
 }
